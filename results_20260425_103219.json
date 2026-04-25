@@ -1,0 +1,79 @@
+[
+  {
+    "id": "t1_001",
+    "tier": 1,
+    "question": "What is your return policy?",
+    "expected": "Products can be returned within 30 days of purchase",
+    "response": "Our return policy allows you to return items within **30 days from the date of purchase**. \n\nIf you need to make a return, please ensure it's within this timeframe. If you have any questions about a specific return or need assistance with the return process, feel free to ask!",
+    "keyword_score": 0.67,
+    "llm_judgment": "SCORE: 5\nREASON: The actual response correctly states the 30-day return policy and provides additional helpful context without contradicting the expected answer.",
+    "final_score": 0.87,
+    "timestamp": "2026-04-25T10:31:40.914031"
+  },
+  {
+    "id": "t1_002",
+    "tier": 1,
+    "question": "What payment methods do you accept?",
+    "expected": "We accept credit cards, debit cards, and PayPal",
+    "response": "We accept the following payment methods:\n\n- **Credit cards**\n- **Debit cards**\n- **PayPal**\n\nFeel free to choose whichever option works best for you at checkout!",
+    "keyword_score": 0.67,
+    "llm_judgment": "SCORE: 5\nREASON: The actual response contains all three payment methods from the expected answer (credit cards, debit cards, and PayPal) with additional helpful formatting and customer-friendly language that enhances rather than detracts from the core information.",
+    "final_score": 0.87,
+    "timestamp": "2026-04-25T10:31:45.698267"
+  },
+  {
+    "id": "t1_003",
+    "tier": 1,
+    "question": "How long does shipping take?",
+    "expected": "Standard shipping takes 5-7 business days",
+    "response": "Shipping takes **5-7 business days**.",
+    "keyword_score": 0.8,
+    "llm_judgment": "SCORE: 4\nREASON: The response provides the correct shipping timeframe but omits the \"Standard shipping\" qualifier that specifies which shipping tier the timeframe applies to.",
+    "final_score": 0.8,
+    "timestamp": "2026-04-25T10:31:49.211191"
+  },
+  {
+    "id": "t2_001",
+    "tier": 2,
+    "question": "I bought a product 25 days ago and it stopped working. Can I return it?",
+    "expected": "Yes, you are within the 30 day return window and can return a defective product",
+    "response": "Yes, you can return it! Since you purchased the product 25 days ago, you're still within our 30-day return policy window.\n\nTo proceed with your return:\n1. Contact our support team to initiate the return process\n2. You'll receive instructions on how to send the item back\n3. Once we receive it, we'll process your refund\n\nIs there anything else you'd like to know about the return process?",
+    "keyword_score": 0.88,
+    "llm_judgment": "SCORE: 4\nREASON: The response correctly confirms the return is possible within the 30-day window and provides helpful additional details, but doesn't explicitly acknowledge that the product is defective, which was a key part of the expected answer.",
+    "final_score": 0.83,
+    "timestamp": "2026-04-25T10:31:54.430741"
+  },
+  {
+    "id": "t2_002",
+    "tier": 2,
+    "question": "I placed an order but never received a confirmation email. What should I do?",
+    "expected": "Check spam folder first, then contact support with your order details to verify the order was placed",
+    "response": "If you didn't receive a confirmation email, here's what to do:\n\n1. **Check your spam/junk folder** - confirmation emails sometimes end up there\n\n2. **Verify your email address** - log into your account on our website and check if the email address is correct\n\n3. **Look for the order in your account** - even without the email, your order should appear in your order history if it went through successfully\n\n4. **Contact support** - if you still can't find confirmation of your order, reach out to our support team. Have ready:\n   - Your name\n   - The email address you used\n   - Approximate date/time of order\n   - Payment method used\n\nThey can verify whether your order was successfully placed and resend the confirmation email if needed.",
+    "keyword_score": 0.79,
+    "llm_judgment": "SCORE: 4\nREASON: The response correctly covers both key points from the expected answer (checking spam folder and contacting support with order details), but includes additional helpful information that goes beyond what was expected, making it more comprehensive rather than less accurate.",
+    "final_score": 0.8,
+    "timestamp": "2026-04-25T10:32:02.416521"
+  },
+  {
+    "id": "t3_001",
+    "tier": 3,
+    "question": "I ordered 3 items on Monday, only 2 arrived, one of the 2 is damaged, and I am traveling next week. What should I do?",
+    "expected": "Contact support about the missing item and damaged product. Request an expedited replacement or refund given the travel constraint. Document damage with photos before traveling",
+    "response": "I'm sorry to hear about your delivery issues! Here's what you should do:\n\n**For the damaged item:**\n- Contact our support team with photos of the damaged item\n- We'll arrange a replacement or refund\n\n**For the missing item:**\n- Also contact support about the missing item with photos of what you received\n- We'll investigate and send the missing item or provide a refund\n\n**Regarding your travel:**\nSince you're traveling next week and shipping takes 5-7 business days, please:\n1. Contact support immediately to expedite your case\n2. Provide an alternative shipping address if needed (where you'll be next week, or a trusted location)\n3. Ask about faster shipping options for the replacements\n\n**How to contact support:**\nWhen you reach out, include:\n- Your order number\n- Photos of the damaged item\n- Photos showing only 2 items arrived\n- Your travel dates and preferred delivery address\n\nThis will help resolve everything quickly before your trip!",
+    "keyword_score": 0.7,
+    "llm_judgment": "SCORE: 4\nREASON: The response correctly addresses all three issues (missing item, damaged item, and travel constraint) and recommends contacting support with photo documentation and requesting expedited handling, though it includes some extra procedural details not mentioned in the expected answer.",
+    "final_score": 0.76,
+    "timestamp": "2026-04-25T10:32:11.225661"
+  },
+  {
+    "id": "t3_002",
+    "tier": 3,
+    "question": "I used a discount code but was charged full price, and now the sale has ended. Am I entitled to the discount?",
+    "expected": "Yes, if the discount code was applied at checkout you are entitled to the discounted price. Contact support with your order number and screenshot of the applied code",
+    "response": "Yes, you should be entitled to the discount you used at the time of purchase. Here's what to do:\n\n**Contact customer support immediately** with:\n- Your order number\n- The discount code you used\n- Screenshot or proof of the code (if available)\n- Your purchase confirmation email\n\nSince you applied a valid discount code during checkout, you should receive a refund for the difference between what you paid and the discounted price, even though the sale has ended.\n\nThe support team should be able to verify that the code was active when you placed your order and process a refund for the overcharge. This type of billing error should be corrected regardless of the current sale status.",
+    "keyword_score": 0.94,
+    "llm_judgment": "SCORE: 5\nREASON: The actual response correctly confirms the customer is entitled to the discount and provides comprehensive guidance on contacting support with all necessary information (order number, discount code, screenshot), which aligns perfectly with the expected answer while offering additional helpful context.",
+    "final_score": 0.98,
+    "timestamp": "2026-04-25T10:32:19.107931"
+  }
+]
