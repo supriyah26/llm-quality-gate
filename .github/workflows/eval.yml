@@ -25,7 +25,7 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          python3 eval_runner.py
+          python3 evalrunner.py
 
       - name: Check quality gate
         run: |
