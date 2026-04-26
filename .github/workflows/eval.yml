@@ -19,7 +19,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install anthropic python-dotenv mlflow
+          pip install anthropic python-dotenv mlflow streamlit plotly pandas
 
       - name: Run eval pipeline
         env:
