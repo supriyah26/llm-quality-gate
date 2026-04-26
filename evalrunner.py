@@ -8,7 +8,7 @@ from dataset import dataset
 # Load API key from .env file
 load_dotenv()
 mlflow.set_experiment("Customer Support Eval")
-print("Script is running...")
+print("Script is running...v2")
 
 # Create connection to Claude
 client = anthropic.Anthropic()
