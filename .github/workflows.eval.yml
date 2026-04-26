@@ -1,0 +1,32 @@
+name: LLM Eval Quality Gate
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install anthropic python-dotenv mlflow
+
+      - name: Run eval pipeline
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          python3 eval_runner.py
+
+      - name: Check quality gate
+        run: |
+          python3 gate_check.py

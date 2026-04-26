@@ -231,7 +231,7 @@ with mlflow.start_run():
 
 
     with open(filename, 'w') as f:
-        json.dump(results, f, indent=2)
+        json.dump(output, f, indent=2)
 
     print(f"\n Results saved to {filename}")
     print(f"Total test cases: {len(results)}")
