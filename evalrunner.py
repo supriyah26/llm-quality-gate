@@ -14,7 +14,7 @@ load_dotenv()
 anthropic_client = anthropic.Anthropic()
 openai_client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-mlflow.set_tracking_uri("file:///Users/supriyah/llm-quality-gate/mlruns")
+mlflow.set_tracking_uri("file:./mlruns")
 mlflow.set_experiment("Customer Support Eval")
 print("Starting eval pipeline")
 
