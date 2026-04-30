@@ -1,6 +1,5 @@
 import json
 import sys
-import os
 import glob
 
 # Find the most recent results file
@@ -11,29 +10,43 @@ if not results_files:
     sys.exit(1)
 
 latest_file = max(results_files)
+print(f"Reading results from: {latest_file}")
 
 with open(latest_file) as f:
     output = json.load(f)
 
-# Handle both old format (list) and new format (dict with summary)
-if isinstance(output, list):
-    print("❌ Old results format detected - run evalrunner.py first")
-    sys.exit(1)
-
-summary = output['summary']
-avg_score = summary['average_score']
-passed = summary['passed']
-total = summary['total']
-
-print(f"Average Score: {avg_score}")
-print(f"Passed: {passed}/{total}")
-
 # Quality gate threshold
 THRESHOLD = 0.7
 
-if avg_score < THRESHOLD:
-    print(f"❌ Quality gate FAILED — score {avg_score} below threshold {THRESHOLD}")
+print("\n" + "="*40)
+print("QUALITY GATE CHECK")
+print("="*40)
+
+all_passed = True
+
+for model_name, model_data in output.items():
+    summary = model_data['summary']
+    avg_score = summary['average_score']
+    passed = summary['passed']
+    total = summary['total']
+
+    print(f"\nModel: {model_name.upper()}")
+    print(f"Average Score: {avg_score}")
+    print(f"Passed: {passed}/{total}")
+
+    if avg_score < THRESHOLD:
+        print(f"❌ FAILED — score {avg_score} below threshold {THRESHOLD}")
+        all_passed = False
+    else:
+        print(f"✅ PASSED — score {avg_score} above threshold {THRESHOLD}")
+
+print("\n" + "="*40)
+
+if not all_passed:
+    print("❌ Quality gate FAILED — one or more models below threshold")
+    print("Deployment blocked.")
     sys.exit(1)
 else:
-    print(f"✅ Quality gate PASSED — score {avg_score} above threshold {THRESHOLD}")
+    print("✅ All models passed quality gate")
+    print("Deployment approved.")
     sys.exit(0)

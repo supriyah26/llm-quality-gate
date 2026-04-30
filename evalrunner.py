@@ -1,12 +1,20 @@
 import anthropic
+import openai
+from groq import Groq
 import json
 import mlflow
+import os
 from datetime import datetime
 from dotenv import load_dotenv
 from dataset import dataset
 
 # Load API key from .env file
 load_dotenv()
+# Initialize clients
+anthropic_client = anthropic.Anthropic()
+openai_client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+mlflow.set_tracking_uri("file:///Users/supriyah/llm-quality-gate/mlruns")
 mlflow.set_experiment("Customer Support Eval")
 print("Starting eval pipeline")
 
@@ -27,7 +35,7 @@ def ask_claude(question):
     """
     Send one question to Claude and returns its answer. 
     """
-    message = client.messages.create(
+    message = anthropic_client.messages.create(
         model = "claude-sonnet-4-5",
         max_tokens=500,
         system=SYSTEM_PROMPT, 
@@ -36,6 +44,31 @@ def ask_claude(question):
         ]
     )
     return message.content[0].text
+ 
+def ask_openai(question):
+    """Send one question to GPT-4 and return its answer."""
+    response = openai_client.chat.completions.create(
+        model="gpt-4o-mini",
+        max_tokens=500,
+        messages=[
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": question}
+        ]
+    )
+    return response.choices[0].message.content
+
+
+def ask_groq(question):
+    """Send one question to Llama 3 via Groq and return its answer."""
+    response = groq_client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        max_tokens=500,
+        messages=[
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": question}
+        ]
+    )
+    return response.choices[0].message.content
 
 
 
@@ -176,65 +209,70 @@ def run_summary(results):
 
 
 
-results = []
-with mlflow.start_run():
-    for test_case in dataset:
-        print(f"\nTesting: {test_case['question']}")
+models = {
+    "claude": ask_claude,
+    "openai": ask_openai,
+    "groq_llama3": ask_groq
+}
 
-        response = ask_claude(test_case['question'])
-        print(f"Claude's answer: {response}")
+all_results = {}
 
-    #Step 2 - Keywors match score with Layer 1
+for model_name, ask_fn in models.items():
+    print(f"\n{'='*40}")
+    print(f"Running eval for: {model_name.upper()}")
+    print(f"{'='*40}")
 
-        kw_score = keyword_score(response, test_case['expected'])
-        print(f"Keyword Score: {kw_score}")
+    results = []
 
-        judgment = llm_judge(
-            test_case['question'], 
-            response, 
-            test_case['expected']
-    )
+    with mlflow.start_run(run_name=model_name):
+        for test_case in dataset:
+            print(f"\nTesting: {test_case['question']}")
 
-        print(f"LLM Judgment: {judgment}") 
-        score = final_score(kw_score, judgment)
-        print(f"Final Score: {score}")
+            response = ask_fn(test_case['question'])
+            print(f"Answer: {response}")
 
-    #Step 4 - Collect results 
-        results.append({
-            "id": test_case['id'],
-            "tier": test_case['tier'],
-            "question": test_case['question'],
-            "expected": test_case['expected'],
-            "response": response,
-            "keyword_score": kw_score,
-            "llm_judgment": judgment,
-            "final_score": final_score(kw_score, judgment),
-            "timestamp": datetime.now().isoformat()
-        })
+            kw_score = keyword_score(response, test_case['expected'])
+            print(f"Keyword Score: {kw_score}")
 
-    summary = run_summary(results)
-    mlflow.log_metric("average_score", summary['average_score'])
-    mlflow.log_metric("total_passed", summary['passed'])
-    mlflow.log_metric("total_failed", summary['failed'])
-    mlflow.log_metric("tier1_avg", summary['tier_averages'][1])
-    mlflow.log_metric("tier2_avg", summary['tier_averages'][2])
-    mlflow.log_metric("tier3_avg", summary['tier_averages'][3])
-    mlflow.log_param("model", "claude-sonnet-4-5")
-    mlflow.log_param("total_test_cases", len(dataset))
+            judgment = llm_judge(
+                test_case['question'],
+                response,
+                test_case['expected']
+            )
+            print(f"LLM Judgment: {judgment}")
 
-    filename = f"results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+            score = final_score(kw_score, judgment)
+            print(f"Final Score: {score}")
 
-    output = {
-    "summary": summary, 
-    "results": results
-    }
+            results.append({
+                "id": test_case['id'],
+                "tier": test_case['tier'],
+                "question": test_case['question'],
+                "expected": test_case['expected'],
+                "response": response,
+                "keyword_score": kw_score,
+                "llm_judgment": judgment,
+                "final_score": score,
+                "timestamp": datetime.now().isoformat()
+            })
 
+        summary = run_summary(results)
+        mlflow.log_metric("average_score", summary['average_score'])
+        mlflow.log_metric("total_passed", summary['passed'])
+        mlflow.log_metric("total_failed", summary['failed'])
+        mlflow.log_metric("tier1_avg", summary['tier_averages'][1])
+        mlflow.log_metric("tier2_avg", summary['tier_averages'][2])
+        mlflow.log_metric("tier3_avg", summary['tier_averages'][3])
+        mlflow.log_param("model", model_name)
+        mlflow.log_param("total_test_cases", len(dataset))
 
-    with open(filename, 'w') as f:
-        json.dump(output, f, indent=2)
+        all_results[model_name] = {
+            "summary": summary,
+            "results": results
+        }
 
-    print(f"\n Results saved to {filename}")
-    print(f"Total test cases: {len(results)}")
+filename = f"results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+with open(filename, 'w') as f:
+    json.dump(all_results, f, indent=2)
 
-
-
+print(f"\n✅ All results saved to {filename}")
